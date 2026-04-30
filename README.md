@@ -452,6 +452,7 @@ A **custom agent** — your own pre-configured Claude with a specific system pro
    ---
    name: pr-reviewer
    description: Reviews diffs for clarity, correctness, and test coverage. Read-only.
+   model: Sonnet
    tools: [Read, Grep, Glob]
    ---
 
