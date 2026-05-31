@@ -11,7 +11,7 @@ The tips are ordered to be read top to bottom: **Foundations** (the handful of h
 
 ## Table of Contents
 
-### 🧱 Foundations — use these every session
+### Foundations — use these every session
 | # | Tip | One-line summary |
 |---|-----|------------------|
 | 1 | [Plan Mode](#1-plan-before-you-build-with-plan-mode) | Agree on a plan before any edits |
@@ -23,7 +23,7 @@ The tips are ordered to be read top to bottom: **Foundations** (the handful of h
 | 7 | [`@` File Mentions](#7-point-claude-at-files-with-) | Pull exact files into context |
 | 8 | [Images & Screenshots](#8-paste-images--screenshots) | Show Claude a mockup or a bug |
 
-### ⚡ Daily Drivers
+### Daily Drivers
 | # | Tip | One-line summary |
 |---|-----|------------------|
 | 9 | [Custom Slash Commands](#9-turn-repeated-prompts-into-slash-commands) | Reusable prompts for the whole team |
@@ -35,7 +35,7 @@ The tips are ordered to be read top to bottom: **Foundations** (the handful of h
 | 15 | [Teleport Sessions](#15-teleport-sessions-between-mobile-web-desktop--terminal) | Move a session between devices |
 | 16 | [Cowork Dispatch](#16-cowork-dispatch--remote-control-for-claude-desktop) | Drive Claude Desktop from anywhere |
 
-### 🚀 Automation & Scale
+### Automation & Scale
 | # | Tip | One-line summary |
 |---|-----|------------------|
 | 17 | [Best Model + Parallel Claudes](#17-use-the-most-capable-model--run-several-in-parallel) | The creator's core workflow |
@@ -51,7 +51,7 @@ The tips are ordered to be read top to bottom: **Foundations** (the handful of h
 
 ---
 
-# 🧱 Foundations
+# Foundations
 
 ## 1. Plan Before You Build with Plan Mode
 
@@ -250,7 +250,7 @@ Claude Code is multimodal — you can give it images: UI mockups to build from, 
 
 ---
 
-# ⚡ Daily Drivers
+# Daily Drivers
 
 ## 9. Turn Repeated Prompts into Slash Commands
 
@@ -467,7 +467,7 @@ A secure remote-control layer for the Claude Desktop app. Once connected, Claude
 
 ---
 
-# 🚀 Automation & Scale
+# Automation & Scale
 
 ## 17. Use the Most Capable Model — and Run Several in Parallel
 
