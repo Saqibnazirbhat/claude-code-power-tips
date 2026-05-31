@@ -1,9 +1,9 @@
-# Claude Code — 14 Power Tips & Workflows
+# Claude Code — 23 Power Tips & Workflows
 
 A practical, hands-on guide to Claude Code's most useful features. Each tip walks you through **what it is**, **when you'd reach for it**, and **exactly how to use it** — with example scenarios so you can copy-paste your way into a working setup.
 
-> **New to Claude Code?** Start with tips 1, 2, 5, 6, 7, and 9 — they unlock 80% of daily value.
-> **Already shipping with it?** Jump to 3, 4, 10, 11, and 14 to scale your throughput.
+> **New to Claude Code?** Start with tips 15–21 (the everyday core: Plan Mode, CLAUDE.md, thinking, context, `@`, images) plus 1, 6, 7, and 9 — they unlock 80% of daily value.
+> **Already shipping with it?** Jump to 3, 4, 10, 11, 14, 17, 22, and 23 to scale your throughput.
 
 ---
 
@@ -25,6 +25,15 @@ A practical, hands-on guide to Claude Code's most useful features. Each tip walk
 | 12 | [`--bare`](#12-use---bare-to-speed-up-sdk-startup-by-up-to-10x) | Pro | 10× faster SDK startup |
 | 13 | [`--add-dir`](#13-use---add-dir-to-give-claude-access-to-more-folders) | Intermediate | Multi-repo workflows |
 | 14 | [Custom Agents](#14-use---agent-to-give-claude-a-custom-system-prompt--tools) | Pro | Specialized agents on demand |
+| 15 | [Plan Mode](#15-plan-before-you-build-with-plan-mode) | Beginner | Agree on a plan before any edits |
+| 16 | [CLAUDE.md Memory](#16-give-claude-lasting-memory-with-claudemd) | Beginner | Teach Claude your project once |
+| 17 | [Custom Slash Commands](#17-turn-repeated-prompts-into-slash-commands) | Intermediate | Reusable prompts for the whole team |
+| 18 | [Extended Thinking](#18-make-claude-think-harder) | Beginner | More reasoning for hard problems |
+| 19 | [Context Management](#19-manage-context-with-clear-compact--rewind) | Beginner | Keep sessions sharp and on-track |
+| 20 | [`@` File Mentions](#20-point-claude-at-files-with-) | Beginner | Pull exact files into context |
+| 21 | [Images & Screenshots](#21-paste-images--screenshots) | Beginner | Show Claude a mockup or a bug |
+| 22 | [MCP Servers](#22-connect-external-tools-with-mcp) | Intermediate | Wire in databases, APIs, and tools |
+| 23 | [Subagents](#23-delegate-work-to-subagents) | Pro | Fan out research and parallel work |
 
 ---
 
@@ -479,9 +488,255 @@ Combine with `/loop` (Tip #3) for autonomous workflows:
 
 ---
 
+## 15. Plan Before You Build with Plan Mode
+
+**What it is**
+A mode where Claude researches and proposes a plan **without touching any files**. You review and refine the plan together, then approve it before a single edit happens. This is the single highest-leverage habit in Claude Code — it's how the team that builds it works.
+
+**When to use it**
+- Any non-trivial task (a feature, a refactor, a bug you don't fully understand yet)
+- When you want to catch a wrong approach *before* code is written
+- Whenever you'd otherwise say "wait, that's not what I meant"
+
+**How to use it — step by step**
+1. Press **`Shift+Tab`** to cycle modes until you see **plan mode** (the modes cycle: normal → auto-accept → plan).
+2. Describe what you want. Claude explores the code and returns a plan — no edits yet.
+3. Push back: *"don't touch the auth layer,"* *"do it in two phases,"* *"use the existing helper instead."*
+4. When the plan looks right, approve it. Claude switches to executing — and often one-shots the whole task.
+
+> **Pro tip:** Plan mode → approve → auto-accept edits is the workflow Boris Cherny (Claude Code's creator) uses for most PRs.
+
+---
+
+## 16. Give Claude Lasting Memory with CLAUDE.md
+
+**What it is**
+A `CLAUDE.md` file that Claude reads automatically at the start of every session. It's where you record how your project works, your conventions, and the mistakes you don't want repeated — so you stop re-explaining the same things.
+
+**When to use it**
+- Project-specific build/test/lint commands ("always run `pnpm test`, never `npm test`")
+- Conventions Claude keeps getting wrong (file layout, naming, "no default exports")
+- Anything you find yourself typing into the prompt more than twice
+
+**How to use it — step by step**
+1. Generate a starter file for your repo:
+   ```
+   /init
+   ```
+2. Edit `CLAUDE.md` to be **short, specific, and opinionated** — a long file dilutes attention. A good test: *"would removing this line cause Claude to make a mistake?"* If no, cut it.
+3. Add a memory on the fly without leaving your prompt — start a line with `#`:
+   ```
+   # always use snake_case for database columns
+   ```
+   Claude appends it to the right memory file.
+4. Layer memory by scope: `~/.claude/CLAUDE.md` (you, everywhere), `./CLAUDE.md` (project, checked into git), `./subdir/CLAUDE.md` (folder-specific).
+
+> **Pro tip:** When Claude does something wrong, tell it *"update CLAUDE.md so you don't repeat this."* It's great at distilling its own mistakes into precise rules. Check the project file into git so the whole team benefits.
+
+---
+
+## 17. Turn Repeated Prompts into Slash Commands
+
+**What it is**
+Custom slash commands — reusable prompt templates stored as Markdown files. Anything you ask many times a day becomes a one-word command, and Claude can invoke them too.
+
+**When to use it**
+- Repeated workflows: "review this diff," "write tests for this file," "draft a PR description"
+- Standardizing how a team triggers common tasks
+- Multi-step prompts you don't want to retype
+
+**How to use it — step by step**
+1. Create `.claude/commands/<name>.md` (project) or `~/.claude/commands/<name>.md` (personal):
+   ```markdown
+   ---
+   description: Review the current diff for bugs
+   ---
+   Review the staged diff. Flag correctness bugs and security issues.
+   Don't comment on style. Argument: $ARGUMENTS
+   ```
+2. Run it in any session:
+   ```
+   /review
+   ```
+3. Pass input with `$ARGUMENTS` (or `$1`, `$2` for positional):
+   ```
+   /review focus on the error handling
+   ```
+
+> **Pro tip:** Check `.claude/commands/` into git so commands are shared — and version-controlled — across the team.
+
+---
+
+## 18. Make Claude Think Harder
+
+**What it is**
+Extended thinking — give Claude a larger reasoning budget for hard problems, just by using trigger words in your prompt. More thinking means better plans, trickier debugging, and fewer wrong turns.
+
+**When to use it**
+- Designing architecture or weighing trade-offs
+- Debugging something subtle or intermittent
+- Any problem where a fast-but-wrong answer costs you more time than a slow-but-right one
+
+**How to use it — step by step**
+1. Add an escalating trigger word to your request:
+   - `think` < `think hard` < `think harder` < `ultrathink` (roughly increasing reasoning budget).
+2. Example:
+   ```
+   ultrathink about why this race condition only happens under load, then propose a fix
+   ```
+3. Claude shows its reasoning, then acts on it.
+
+> **Pro tip:** Pair with Plan Mode (Tip #15) — "think hard, then give me a plan" is a powerful combo for big tasks.
+
+---
+
+## 19. Manage Context with `/clear`, `/compact` & `/rewind`
+
+**What it is**
+Tools to keep a session focused. Context isn't infinite, and a cluttered one makes Claude slower and less accurate. These commands let you reset, condense, or step back.
+
+**When to use it**
+- **`/clear`** — starting a genuinely new task; wipe the slate so old context doesn't bleed in
+- **`/compact`** — mid-long-task; keep going but shrink the history to essentials
+- **`/rewind`** — you went down a bad path and want to restore code/conversation to an earlier point
+
+**How to use it — step by step**
+1. Done with one task, starting another:
+   ```
+   /clear
+   ```
+2. Long session getting heavy but you need to continue:
+   ```
+   /compact
+   ```
+   (Optionally: `/compact keep the API design decisions` to steer what's preserved.)
+3. To undo and jump back to an earlier checkpoint:
+   ```
+   /rewind
+   ```
+   (You can also double-tap **Esc** to jump back and edit an earlier message.)
+
+> **Pro tip:** Reach for `/clear` far more often than you'd think — most "Claude is acting confused" moments are really "the context is stale."
+
+---
+
+## 20. Point Claude at Files with `@`
+
+**What it is**
+Type `@` to fuzzy-search and drop an exact file or directory into your prompt — no need to describe where something lives or paste its contents.
+
+**When to use it**
+- "Refactor `@src/auth/session.ts`" instead of "the session file in auth"
+- Giving Claude a reference implementation to mirror
+- Pulling a whole directory in as context
+
+**How to use it — step by step**
+1. In your prompt, type `@` and start typing a path or filename:
+   ```
+   make @src/api/users.ts follow the same error handling as @src/api/orders.ts
+   ```
+2. Pick from the autocomplete list.
+3. Claude reads those exact files into context before acting.
+
+> **Pro tip:** `@`-mentioning a clean example file is the fastest way to get Claude to match your existing patterns.
+
+---
+
+## 21. Paste Images & Screenshots
+
+**What it is**
+Claude Code is multimodal — you can give it images: UI mockups to build from, screenshots of bugs, error dialogs, or diagrams.
+
+**When to use it**
+- "Build this" from a design mockup
+- Showing a visual bug that's hard to describe in words
+- Pasting a stack trace or terminal screenshot
+
+**How to use it — step by step**
+1. Add an image to your prompt:
+   - **Paste** from clipboard (great for screenshots)
+   - **Drag and drop** a file into the terminal/app
+   - Or reference a path: `look at ./design/mockup.png`
+2. Describe what you want: *"build a React component matching this layout."*
+3. Claude works from what it sees.
+
+> **Pro tip:** Combine with the Chrome extension (Tip #6) so Claude can screenshot its *own* result and compare it to your mockup.
+
+---
+
+## 22. Connect External Tools with MCP
+
+**What it is**
+The Model Context Protocol (MCP) lets Claude talk to external systems — databases, issue trackers, browsers, design tools, your company's internal APIs — through standardized server connections.
+
+**When to use it**
+- Querying a real database instead of guessing your schema
+- Pulling ticket details from Jira/Linear/GitHub directly
+- Giving Claude any capability beyond reading and editing local files
+
+**How to use it — step by step**
+1. Add a server from the CLI:
+   ```bash
+   claude mcp add <name> -- <command to start the server>
+   ```
+2. Or add it to `.mcp.json` in your project to share with the team:
+   ```json
+   {
+     "mcpServers": {
+       "postgres": { "command": "npx", "args": ["-y", "@some/postgres-mcp", "$DB_URL"] }
+     }
+   }
+   ```
+3. List and check connections:
+   ```bash
+   claude mcp list
+   ```
+4. In-session, Claude can now call that server's tools (and read its resources via `@`).
+
+> **Pro tip:** Only enable the servers you actually need — each one adds tools and context. Trim aggressively for speed.
+
+---
+
+## 23. Delegate Work to Subagents
+
+**What it is**
+Ask Claude to spin up **subagents** — separate agent instances that handle a chunk of work (research, a wide search, an isolated edit) and report back a summary. This keeps your main session's context clean while work happens in parallel.
+
+**When to use it**
+- Broad "search the whole codebase for X" sweeps where you only want the conclusion
+- Running several independent investigations at once
+- Keeping a long task's context lean by offloading noisy exploration
+
+**How to use it — step by step**
+1. Just ask, naming the shape of the work:
+   ```
+   use a subagent to find every place we call the legacy payment API
+   ```
+2. For multiple parallel tracks:
+   ```
+   spin up subagents to (a) audit test coverage and (b) list unused dependencies
+   ```
+3. Each subagent works independently and returns a summary to your main session.
+
+> **Pro tip:** Subagents (in-session, ad hoc) and custom agents (Tip #14, pre-configured files) complement each other — use custom agents for repeatable roles, subagents for one-off fan-out.
+
+---
+
 ## Quick Reference Cheat Sheet
 
 ```bash
+# ─── Everyday Core ──────────────────────────────────
+Shift+Tab                               # cycle to plan mode
+/init                                   # generate a CLAUDE.md
+# <rule>                                # quick-add a memory
+/<name> [args]                          # run a custom slash command
+think | think hard | ultrathink         # more reasoning budget
+/clear                                  # wipe context for a new task
+/compact                                # condense a long session
+/rewind                                 # undo to an earlier checkpoint (or Esc Esc)
+@path/to/file                           # pull an exact file into context
+claude mcp add <name> -- <cmd>          # connect an external tool (MCP)
+
 # ─── Sessions ───────────────────────────────────────
 claude --teleport                       # move cloud session local
 /teleport                               # same, from inside a session
@@ -509,21 +764,29 @@ claude --agent=<name>                   # run a custom agent
 
 ## Suggested Learning Path
 
-**Week 1 — Get comfortable**
-1. Install the **mobile app** (Tip #1)
-2. Try `/teleport` and `/remote-control` (Tip #2)
-3. Install the **Chrome extension** (Tip #6)
-4. Use `/btw` for side questions (Tip #9)
+**Week 1 — Everyday core** (shapes *every* session)
+1. Start tasks in **Plan Mode** with `Shift+Tab` (Tip #15)
+2. Run `/init` and tend your **CLAUDE.md** (Tip #16)
+3. Use `think` / `ultrathink` on hard problems (Tip #18)
+4. Practice `/clear` and `/compact` to manage context (Tip #19)
+5. Pull files in with `@` and paste screenshots (Tips #20, #21)
 
-**Week 2 — Add automation**
-5. Write your first **skill**, then wrap it in `/loop` (Tip #3)
-6. Add a `Stop` hook so Claude doesn't quit early (Tip #4)
-7. Try `--add-dir` for multi-repo work (Tip #13)
+**Week 2 — Comfort & reach**
+6. Install the **mobile app** and try `/teleport` (Tips #1, #2)
+7. Install the **Chrome extension** (Tip #6)
+8. Use `/btw` for side questions (Tip #9)
+9. Write your first **custom slash command** (Tip #17)
 
-**Week 3 — Scale up**
-8. Start a worktree session with `claude -w` (Tip #10)
-9. Run a small `/batch` job (Tip #11)
-10. Build a **custom agent** for a recurring task (Tip #14)
+**Week 3 — Add automation**
+10. Write a skill, then wrap it in `/loop` (Tip #3)
+11. Add a `Stop` hook so Claude doesn't quit early (Tip #4)
+12. Try `--add-dir` for multi-repo work (Tip #13)
+13. Connect an **MCP server** (Tip #22)
+
+**Week 4 — Scale up**
+14. Start a worktree session with `claude -w` (Tip #10)
+15. Run a small `/batch` job (Tip #11)
+16. Build a **custom agent** and delegate to **subagents** (Tips #14, #23)
 
 ---
 
