@@ -1,34 +1,391 @@
-# Claude Code — 14 Power Tips & Workflows
+# Claude Code — 26 Power Tips & Workflows
 
 A practical, hands-on guide to Claude Code's most useful features. Each tip walks you through **what it is**, **when you'd reach for it**, and **exactly how to use it** — with example scenarios so you can copy-paste your way into a working setup.
 
-> **New to Claude Code?** Start with tips 1, 2, 5, 6, 7, and 9 — they unlock 80% of daily value.
-> **Already shipping with it?** Jump to 3, 4, 10, 11, and 14 to scale your throughput.
+The tips are ordered to be read top to bottom: **Foundations** (the handful of habits that shape every single session) come first, then **Daily Drivers**, then **Automation & Scale** for when you're ready to multiply your throughput.
+
+> **New to Claude Code?** Just start at Tip #1 and work down through the Foundations (1–8). They unlock 80% of the daily value.
+> **Already shipping with it?** Jump to the Automation & Scale section (17–26).
 
 ---
 
 ## Table of Contents
 
-| # | Tip | Best for | One-line summary |
-|---|-----|----------|------------------|
-| 1 | [Mobile App](#1-claude-code-has-a-mobile-app) | Beginner | Code from your phone |
-| 2 | [Teleport Sessions](#2-teleport-sessions-between-mobile-web-desktop--terminal) | Beginner | Move a session between devices |
-| 3 | [`/loop` and `/schedule`](#3-automate-claude-with-loop-and-schedule) | Intermediate | Run Claude on a recurring schedule |
-| 4 | [Hooks](#4-use-hooks-to-deterministically-run-logic) | Intermediate | Run code at fixed lifecycle points |
-| 5 | [Cowork Dispatch](#5-cowork-dispatch--remote-control-for-claude-desktop) | Beginner | Drive Claude Desktop from anywhere |
-| 6 | [Chrome Extension](#6-use-the-chrome-extension-for-frontend-work) | Beginner | Give Claude a browser for frontend |
-| 7 | [Desktop App Web Servers](#7-let-claude-start--test-web-servers-via-desktop-app) | Beginner | Auto-run and test your dev server |
-| 8 | [Fork Your Session](#8-fork-your-session) | Intermediate | Branch off without losing state |
-| 9 | [`/btw` Side Queries](#9-use-btw-for-side-queries) | Beginner | Ask side questions, no derail |
-| 10 | [Git Worktrees](#10-use-git-worktrees-for-massive-parallelism) | Pro | Run dozens of Claudes in parallel |
-| 11 | [`/batch`](#11-use-batch-to-fan-out-massive-changesets) | Pro | Fan out huge changesets |
-| 12 | [`--bare`](#12-use---bare-to-speed-up-sdk-startup-by-up-to-10x) | Pro | 10× faster SDK startup |
-| 13 | [`--add-dir`](#13-use---add-dir-to-give-claude-access-to-more-folders) | Intermediate | Multi-repo workflows |
-| 14 | [Custom Agents](#14-use---agent-to-give-claude-a-custom-system-prompt--tools) | Pro | Specialized agents on demand |
+### 🧱 Foundations — use these every session
+| # | Tip | One-line summary |
+|---|-----|------------------|
+| 1 | [Plan Mode](#1-plan-before-you-build-with-plan-mode) | Agree on a plan before any edits |
+| 2 | [CLAUDE.md Memory](#2-give-claude-lasting-memory-with-claudemd) | Teach Claude your project once |
+| 3 | [Let Claude Write Its Own Rules & Prompts](#3-let-claude-write-its-own-rules--prompts) | Stop hand-crafting prompts — let Claude do it |
+| 4 | [Extended Thinking](#4-make-claude-think-harder) | More reasoning for hard problems |
+| 5 | [Verify-Driven Development](#5-give-claude-a-way-to-verify-its-work) | Give Claude a feedback loop (the #1 lever) |
+| 6 | [Context Management](#6-manage-context-with-clear-compact--rewind) | Keep sessions sharp with `/clear`, `/compact`, `/rewind` |
+| 7 | [`@` File Mentions](#7-point-claude-at-files-with-) | Pull exact files into context |
+| 8 | [Images & Screenshots](#8-paste-images--screenshots) | Show Claude a mockup or a bug |
+
+### ⚡ Daily Drivers
+| # | Tip | One-line summary |
+|---|-----|------------------|
+| 9 | [Custom Slash Commands](#9-turn-repeated-prompts-into-slash-commands) | Reusable prompts for the whole team |
+| 10 | [Chrome Extension](#10-use-the-chrome-extension-for-frontend-work) | Give Claude a browser for frontend |
+| 11 | [Desktop App Web Servers](#11-let-claude-start--test-web-servers-via-desktop-app) | Auto-run and test your dev server |
+| 12 | [`/btw` Side Queries](#12-use-btw-for-side-queries) | Ask side questions, no derail |
+| 13 | [Fork Your Session](#13-fork-your-session) | Branch off without losing state |
+| 14 | [Mobile App](#14-claude-code-has-a-mobile-app) | Code from your phone |
+| 15 | [Teleport Sessions](#15-teleport-sessions-between-mobile-web-desktop--terminal) | Move a session between devices |
+| 16 | [Cowork Dispatch](#16-cowork-dispatch--remote-control-for-claude-desktop) | Drive Claude Desktop from anywhere |
+
+### 🚀 Automation & Scale
+| # | Tip | One-line summary |
+|---|-----|------------------|
+| 17 | [Best Model + Parallel Claudes](#17-use-the-most-capable-model--run-several-in-parallel) | The creator's core workflow |
+| 18 | [`/loop` and `/schedule`](#18-automate-claude-with-loop-and-schedule) | Run Claude on a recurring schedule |
+| 19 | [Hooks](#19-use-hooks-to-deterministically-run-logic) | Run code at fixed lifecycle points |
+| 20 | [`--add-dir`](#20-use---add-dir-to-give-claude-access-to-more-folders) | Multi-repo workflows |
+| 21 | [MCP Servers](#21-connect-external-tools-with-mcp) | Wire in databases, APIs, and tools |
+| 22 | [Subagents](#22-delegate-work-to-subagents) | Fan out research and parallel work |
+| 23 | [Git Worktrees](#23-use-git-worktrees-for-massive-parallelism) | Run dozens of Claudes in parallel |
+| 24 | [`/batch`](#24-use-batch-to-fan-out-massive-changesets) | Fan out huge changesets |
+| 25 | [Custom Agents](#25-use---agent-to-give-claude-a-custom-system-prompt--tools) | Specialized agents on demand |
+| 26 | [`--bare`](#26-use---bare-to-speed-up-sdk-startup-by-up-to-10x) | 10× faster SDK startup |
 
 ---
 
-## 1. Claude Code Has a Mobile App
+# 🧱 Foundations
+
+## 1. Plan Before You Build with Plan Mode
+
+**What it is**
+A mode where Claude researches and proposes a plan **without touching any files**. You review and refine the plan together, then approve it before a single edit happens. This is the single highest-leverage habit in Claude Code — it's how the team that builds it works.
+
+**When to use it**
+- Any non-trivial task (a feature, a refactor, a bug you don't fully understand yet)
+- When you want to catch a wrong approach *before* code is written
+- Whenever you'd otherwise say "wait, that's not what I meant"
+
+**How to use it — step by step**
+1. Press **`Shift+Tab`** to cycle modes until you see **plan mode** (the modes cycle: normal → auto-accept → plan).
+2. Describe what you want. Claude explores the code and returns a plan — no edits yet.
+3. Push back: *"don't touch the auth layer,"* *"do it in two phases,"* *"use the existing helper instead."*
+4. When the plan looks right, approve it. Claude switches to executing — and often one-shots the whole task.
+
+> **Pro tip:** Plan mode → approve → auto-accept edits is the workflow Boris Cherny (Claude Code's creator) uses for most PRs. Pair it with extended thinking (Tip #4): *"think hard, then give me a plan."*
+
+---
+
+## 2. Give Claude Lasting Memory with CLAUDE.md
+
+**What it is**
+A `CLAUDE.md` file that Claude reads automatically at the start of every session. It's where you record how your project works, your conventions, and the mistakes you don't want repeated — so you stop re-explaining the same things.
+
+**When to use it**
+- Project-specific build/test/lint commands ("always run `pnpm test`, never `npm test`")
+- Conventions Claude keeps getting wrong (file layout, naming, "no default exports")
+- Anything you find yourself typing into the prompt more than twice
+
+**How to use it — step by step**
+1. Generate a starter file for your repo:
+   ```
+   /init
+   ```
+2. Edit `CLAUDE.md` to be **short, specific, and opinionated** — a long file dilutes attention. A good test: *"would removing this line cause Claude to make a mistake?"* If no, cut it.
+3. Add a memory on the fly without leaving your prompt — start a line with `#`:
+   ```
+   # always use snake_case for database columns
+   ```
+   Claude appends it to the right memory file.
+4. Layer memory by scope: `~/.claude/CLAUDE.md` (you, everywhere), `./CLAUDE.md` (project, checked into git), `./subdir/CLAUDE.md` (folder-specific).
+
+> **Pro tip:** Check the project file into git so the whole team benefits — and see Tip #3 for the trick of letting Claude maintain this file *for* you.
+
+---
+
+## 3. Let Claude Write Its Own Rules & Prompts
+
+**What it is**
+Meta-prompting: instead of hand-crafting the perfect prompt or rule, you let **Claude** write it. Claude is excellent at distilling its own mistakes into precise rules and at turning a vague ask into a sharp prompt — so your job becomes *pointing*, not *explaining*. This is one of the most-cited habits of Claude Code's creator.
+
+**When to use it**
+- Right after Claude does something wrong — capture the lesson instead of re-correcting it forever
+- When you catch yourself writing a long, elaborate prompt
+- When creating a new slash command (Tip #9) or custom agent (Tip #25)
+
+**How to use it — step by step**
+1. **Turn mistakes into rules.** When Claude gets something wrong:
+   ```
+   update CLAUDE.md so you don't make this mistake again
+   ```
+   Claude writes a crisp, durable rule far faster than you would.
+2. **Keep your own prompts short — point, don't explain.** The context is already there. A real example the creator uses:
+   ```
+   Grill me on these changes. Don't open a PR until I pass your test.
+   ```
+3. **Ask Claude to author its own artifacts:**
+   ```
+   write a slash command that reviews the current diff for security issues
+   improve this prompt so it's clearer and more specific, then run it
+   ```
+
+> **Pro tip:** This compounds with Tips #2 and #9 — a self-maintaining CLAUDE.md plus Claude-authored slash commands means your setup keeps getting better with almost no manual prompt engineering.
+
+---
+
+## 4. Make Claude Think Harder
+
+**What it is**
+Extended thinking — give Claude a larger reasoning budget for hard problems, just by using trigger words in your prompt. More thinking means better plans, trickier debugging, and fewer wrong turns.
+
+**When to use it**
+- Designing architecture or weighing trade-offs
+- Debugging something subtle or intermittent
+- Any problem where a fast-but-wrong answer costs you more time than a slow-but-right one
+
+**How to use it — step by step**
+1. Add an escalating trigger word to your request:
+   - `think` < `think hard` < `think harder` < `ultrathink` (roughly increasing reasoning budget).
+2. Example:
+   ```
+   ultrathink about why this race condition only happens under load, then propose a fix
+   ```
+3. Claude shows its reasoning, then acts on it.
+
+> **Pro tip:** Pair with Plan Mode (Tip #1) — "think hard, then give me a plan" is a powerful combo for big tasks.
+
+---
+
+## 5. Give Claude a Way to Verify Its Work
+
+**What it is**
+The single biggest quality lever in this whole guide. If Claude has a way to **check its own output** — a test runner, a browser, a dev server it can hit, a linter, a script — it will iterate until the work is genuinely good. The creator's words: a good feedback loop **2–3×'s the quality** of the final result.
+
+**When to use it**
+- Honestly, every non-trivial task. This is a mindset more than a feature.
+- Especially anything with a visible result: UIs, APIs, data transforms, build output.
+
+**How to use it — step by step**
+1. **Tell Claude how to check itself**, and to keep going until it's green:
+   ```
+   run `pnpm test` after each change and don't stop until everything passes
+   ```
+2. **Give it eyes and hands** for the relevant domain:
+   - Frontend → the Chrome extension (Tip #10) or Desktop's bundled browser (Tip #11)
+   - Backend/API → "start the server and curl the endpoint to confirm the response shape"
+3. **Make verification automatic** with a `Stop` hook (Tip #19) that re-runs until a condition holds.
+
+> **Pro tip:** If you ask an engineer to build a website but forbid them from opening a browser, the result is rough. Same with Claude — *give it the browser.* Every other tip in this guide is, at heart, a different shape of this one idea.
+
+---
+
+## 6. Manage Context with `/clear`, `/compact` & `/rewind`
+
+**What it is**
+Tools to keep a session focused. Context isn't infinite, and a cluttered one makes Claude slower and less accurate. These commands let you reset, condense, or step back.
+
+**When to use it**
+- **`/clear`** — starting a genuinely new task; wipe the slate so old context doesn't bleed in
+- **`/compact`** — mid-long-task; keep going but shrink the history to essentials
+- **`/rewind`** — you went down a bad path and want to restore code/conversation to an earlier point
+
+**How to use it — step by step**
+1. Done with one task, starting another:
+   ```
+   /clear
+   ```
+2. Long session getting heavy but you need to continue:
+   ```
+   /compact
+   ```
+   (Optionally: `/compact keep the API design decisions` to steer what's preserved.)
+3. To undo and jump back to an earlier checkpoint:
+   ```
+   /rewind
+   ```
+   (You can also double-tap **Esc** to jump back and edit an earlier message.)
+
+> **Pro tip:** Reach for `/clear` far more often than you'd think — most "Claude is acting confused" moments are really "the context is stale."
+
+---
+
+## 7. Point Claude at Files with `@`
+
+**What it is**
+Type `@` to fuzzy-search and drop an exact file or directory into your prompt — no need to describe where something lives or paste its contents.
+
+**When to use it**
+- "Refactor `@src/auth/session.ts`" instead of "the session file in auth"
+- Giving Claude a reference implementation to mirror
+- Pulling a whole directory in as context
+
+**How to use it — step by step**
+1. In your prompt, type `@` and start typing a path or filename:
+   ```
+   make @src/api/users.ts follow the same error handling as @src/api/orders.ts
+   ```
+2. Pick from the autocomplete list.
+3. Claude reads those exact files into context before acting.
+
+> **Pro tip:** `@`-mentioning a clean example file is the fastest way to get Claude to match your existing patterns.
+
+---
+
+## 8. Paste Images & Screenshots
+
+**What it is**
+Claude Code is multimodal — you can give it images: UI mockups to build from, screenshots of bugs, error dialogs, or diagrams.
+
+**When to use it**
+- "Build this" from a design mockup
+- Showing a visual bug that's hard to describe in words
+- Pasting a stack trace or terminal screenshot
+
+**How to use it — step by step**
+1. Add an image to your prompt:
+   - **Paste** from clipboard (great for screenshots)
+   - **Drag and drop** a file into the terminal/app
+   - Or reference a path: `look at ./design/mockup.png`
+2. Describe what you want: *"build a React component matching this layout."*
+3. Claude works from what it sees.
+
+> **Pro tip:** Combine with the Chrome extension (Tip #10) so Claude can screenshot its *own* result and compare it to your mockup — verification (Tip #5) for pixels.
+
+---
+
+# ⚡ Daily Drivers
+
+## 9. Turn Repeated Prompts into Slash Commands
+
+**What it is**
+Custom slash commands — reusable prompt templates stored as Markdown files. Anything you ask many times a day becomes a one-word command, and Claude can invoke them too.
+
+**When to use it**
+- Repeated workflows: "review this diff," "write tests for this file," "draft a PR description"
+- Standardizing how a team triggers common tasks
+- Multi-step prompts you don't want to retype
+
+**How to use it — step by step**
+1. Create `.claude/commands/<name>.md` (project) or `~/.claude/commands/<name>.md` (personal):
+   ```markdown
+   ---
+   description: Review the current diff for bugs
+   ---
+   Review the staged diff. Flag correctness bugs and security issues.
+   Don't comment on style. Argument: $ARGUMENTS
+   ```
+2. Run it in any session:
+   ```
+   /review
+   ```
+3. Pass input with `$ARGUMENTS` (or `$1`, `$2` for positional):
+   ```
+   /review focus on the error handling
+   ```
+
+> **Pro tip:** Don't write these by hand — ask Claude to draft the command for you (Tip #3). Check `.claude/commands/` into git so commands are shared and version-controlled across the team.
+
+---
+
+## 10. Use the Chrome Extension for Frontend Work
+
+**What it is**
+A Chrome / Edge extension that lets Claude **see** what's in your browser — DOM, console errors, screenshots, network activity.
+
+**Why it matters**
+This is verification (Tip #5) for frontend work. Give Claude a way to see the live page, and it will iterate until the UI is right.
+
+**When to use it**
+Every time you touch frontend code. UI bugs, layout issues, "why isn't this button working", visual regressions.
+
+**How to use it — step by step**
+1. Install the **Claude Chrome extension** (works on Chrome and Edge).
+2. Pin it to your toolbar.
+3. Start a Claude Code session in the project root.
+4. Open your dev site in Chrome.
+5. Click the extension to **connect** the tab to your Claude session.
+6. Now ask: *"The header overlaps the hero on mobile — fix it."* Claude will inspect the live page, edit CSS, refresh, verify, and iterate.
+
+> **Pro tip:** It's purpose-built for Claude Code — fewer surprises and less setup than a generic browser MCP.
+
+---
+
+## 11. Let Claude Start & Test Web Servers via Desktop App
+
+**What it is**
+The **Claude Desktop** app bundles the ability for Claude to spin up your dev server *and* drive a built-in browser to test it — no extension needed.
+
+**When to use it**
+You're building a web app and want a tight loop where Claude:
+1. Edits code →
+2. Starts/restarts the server →
+3. Opens the page in the bundled browser →
+4. Sees the result →
+5. Fixes what's broken →
+6. Repeats until it works.
+
+**How to use it — step by step**
+1. Open **Claude Desktop**.
+2. Open your project folder.
+3. Tell Claude: *"Start the dev server (`npm run dev`) and verify the homepage renders without console errors."*
+4. Claude launches the server in a managed terminal, opens the bundled browser, checks for errors, and reports back.
+5. Iterate from there.
+
+**Alternatives if you don't want to use Desktop**
+- **CLI / VS Code:** Use the Chrome extension (Tip #10).
+- **Anywhere else:** The Desktop app is the path of least resistance.
+
+---
+
+## 12. Use `/btw` for Side Queries
+
+**What it is**
+A way to ask Claude a quick side question **without** interrupting the main task it's working on.
+
+**When to use it**
+- "Quick — what does this regex match?"
+- "Btw, what's the syntax for a Python f-string?"
+- "Remind me, which env var controls log level?"
+
+**How to use it**
+```
+/btw what does \d{4}-\d{2}-\d{2} match?
+```
+
+The main task keeps progressing; you get an answer in-line.
+
+> **Why this matters:** Without `/btw`, side questions either derail your agent or break your flow. `/btw` keeps both threads moving.
+
+---
+
+## 13. Fork Your Session
+
+**What it is**
+A way to **branch off** an existing session. The original keeps its state; the fork starts from the same point but goes a different direction.
+
+**When to use it**
+- "I want to try a riskier refactor without losing my current progress."
+- Exploring two implementations of the same feature.
+- Running an experiment without polluting the main session.
+
+**How to use it — two ways**
+
+**A) From inside the running session:**
+```
+/branch
+```
+
+**B) From the CLI:**
+```bash
+claude --resume <session-id> --fork-session
+```
+
+You can find the session ID with `claude --list-sessions` (or whatever your CLI surfaces — check `claude --help`).
+
+**Example workflow**
+> You're 40 minutes into a complex migration. You want to try a totally different approach but don't want to lose what you have.
+> → `/branch` → describe the new approach in the fork → if it works, keep it; if not, fall back to the original session.
+
+---
+
+## 14. Claude Code Has a Mobile App
 
 **What it is**
 A full Claude Code experience on iOS and Android. Not a watered-down "chat" app — actual coding sessions on your phone.
@@ -46,7 +403,7 @@ A full Claude Code experience on iOS and Android. Not a watered-down "chat" app 
 3. Tap the **Code** tab in the left sidebar.
 4. Either:
    - Start a new session (it'll run in the cloud), or
-   - Continue an existing cloud session you started elsewhere (see Tip #2)
+   - Continue an existing cloud session you started elsewhere (see Tip #15)
 
 **Example workflow**
 > You push a PR before lunch. Over coffee, your CI fails. From your phone:
@@ -54,7 +411,7 @@ A full Claude Code experience on iOS and Android. Not a watered-down "chat" app 
 
 ---
 
-## 2. Teleport Sessions Between Mobile, Web, Desktop & Terminal
+## 15. Teleport Sessions Between Mobile, Web, Desktop & Terminal
 
 **What it is**
 Sessions are **portable**. You can pick one up on a different device — or remote-control your local laptop session from your phone.
@@ -89,7 +446,53 @@ Open `/config` and tick **"Enable Remote Control for all sessions"** — every l
 
 ---
 
-## 3. Automate Claude with `/loop` and `/schedule`
+## 16. Cowork Dispatch — Remote Control for Claude Desktop
+
+**What it is**
+A secure remote-control layer for the Claude Desktop app. Once connected, Claude on your laptop can use your **MCPs**, **browser**, and **computer** — and you can drive all of it from elsewhere, with permission prompts.
+
+**When to use it**
+- Catching up on Slack/email when you're not at your desk
+- Reorganizing files, downloading reports, doing ops work remotely
+- Letting Claude execute browser tasks (with you approving each one) from your phone
+
+**How to use it — step by step**
+1. Make sure **Claude Desktop** is installed and running on your laptop.
+2. Set up Dispatch (sign in with your Claude account on the device you're driving from).
+3. Pair the two — Dispatch will surface your laptop's Claude as a controllable target.
+4. From your phone/web, send instructions; permission prompts surface back to you for approval.
+
+**Mental model**
+> Dispatch turns your laptop into a *Claude server*. You're the remote.
+
+---
+
+# 🚀 Automation & Scale
+
+## 17. Use the Most Capable Model — and Run Several in Parallel
+
+**What it is**
+Two habits straight from Claude Code's creator. First: default to the **biggest model with thinking on**, for everything. Even though it's slower per step, you steer it less and it's better at tool use — so it's usually *faster overall* than babysitting a smaller one. Second: run **multiple Claudes at once** on independent tasks.
+
+**When to use it**
+- Model: basically always. Reach for a smaller/faster model only for trivial, high-volume calls.
+- Parallel: whenever you have two or more tasks that don't depend on each other.
+
+**How to use it — step by step**
+1. **Set the model** to the most capable one:
+   ```
+   /model
+   ```
+   (or `claude --model <name>` at launch) — then turn on thinking (Tip #4).
+2. **Run several in parallel.** Open multiple terminal tabs and **number them 1–5** so you can keep track; give each its own task. Use git worktrees (Tip #23) so they don't collide on the same files.
+3. **Let notifications tell you who needs you.** Enable system notifications so you only check in on the Claude that's waiting for input.
+4. **Add cloud sessions** on claude.ai/code on top of your local ones for even more parallelism.
+
+> **Pro tip:** The creator runs ~5 Claudes in his terminal plus 5–10 on the web at once, all on the biggest model. The bottleneck stops being the model and becomes *how many tasks you can keep in your head.*
+
+---
+
+## 18. Automate Claude with `/loop` and `/schedule`
 
 **What it is**
 - `/loop <interval> <command>` — run something every N minutes/hours
@@ -122,11 +525,11 @@ Anything repetitive: chasing reviewers, rebasing, sweeping comments, pruning sta
 3. **Wrap it in a loop** — `/loop 5m /babysit` to run it on a schedule.
 4. **Watch the first few iterations** — make sure it stops, doesn't loop infinitely on a stuck PR, and respects rate limits.
 
-> **Pro move:** Combine skills + loops + custom agents (Tip #14). The skill is the *what*, the loop is the *when*, the agent is the *how*.
+> **Pro move:** Combine skills + loops + custom agents (Tip #25). The skill is the *what*, the loop is the *when*, the agent is the *how*.
 
 ---
 
-## 4. Use Hooks to Deterministically Run Logic
+## 19. Use Hooks to Deterministically Run Logic
 
 **What it is**
 Hooks are scripts/commands that fire at fixed points in the agent lifecycle. Unlike asking the model "remember to log this every time" (which it might forget), hooks **always** run.
@@ -160,240 +563,11 @@ Hooks are scripts/commands that fire at fixed points in the agent lifecycle. Unl
 
 **Full reference:** <https://code.claude.com/docs/en/hooks>
 
-> **Beginner-friendly first hook:** `Stop` → `claude "keep going until tests pass"`. Solves the #1 frustration of "the agent gave up too early."
+> **Beginner-friendly first hook:** A `Stop` hook that re-runs "keep going until tests pass" is the deterministic backbone of verify-driven development (Tip #5). It solves the #1 frustration of "the agent gave up too early."
 
 ---
 
-## 5. Cowork Dispatch — Remote Control for Claude Desktop
-
-**What it is**
-A secure remote-control layer for the Claude Desktop app. Once connected, Claude on your laptop can use your **MCPs**, **browser**, and **computer** — and you can drive all of it from elsewhere, with permission prompts.
-
-**When to use it**
-- Catching up on Slack/email when you're not at your desk
-- Reorganizing files, downloading reports, doing ops work remotely
-- Letting Claude execute browser tasks (with you approving each one) from your phone
-
-**How to use it — step by step**
-1. Make sure **Claude Desktop** is installed and running on your laptop.
-2. Set up Dispatch (sign in with your Claude account on the device you're driving from).
-3. Pair the two — Dispatch will surface your laptop's Claude as a controllable target.
-4. From your phone/web, send instructions; permission prompts surface back to you for approval.
-
-**Mental model**
-> Dispatch turns your laptop into a *Claude server*. You're the remote.
-
-> "When I'm not coding, I'm dispatching." — anyone who's used it for a week.
-
----
-
-## 6. Use the Chrome Extension for Frontend Work
-
-**What it is**
-A Chrome / Edge extension that lets Claude **see** what's in your browser — DOM, console errors, screenshots, network activity.
-
-**Why it matters (the most important principle in this whole guide)**
-> Give Claude a way to **verify** its output, and it will iterate until it's great.
-
-If you ask any engineer to build a website but forbid them from opening a browser, the result will be rough. Same with Claude. **Give it eyes.**
-
-**When to use it**
-Every time you touch frontend code. UI bugs, layout issues, "why isn't this button working", visual regressions.
-
-**How to use it — step by step**
-1. Install the **Claude Chrome extension** (works on Chrome and Edge).
-2. Pin it to your toolbar.
-3. Start a Claude Code session in the project root.
-4. Open your dev site in Chrome.
-5. Click the extension to **connect** the tab to your Claude session.
-6. Now ask: *"The header overlaps the hero on mobile — fix it."* Claude will inspect the live page, edit CSS, refresh, verify, and iterate.
-
-**Why pick this over a generic browser MCP**
-It's purpose-built for Claude Code — fewer surprises, more reliable connection, less setup.
-
----
-
-## 7. Let Claude Start & Test Web Servers via Desktop App
-
-**What it is**
-The **Claude Desktop** app bundles the ability for Claude to spin up your dev server *and* drive a built-in browser to test it — no extension needed.
-
-**When to use it**
-You're building a web app and want a tight loop where Claude:
-1. Edits code →
-2. Starts/restarts the server →
-3. Opens the page in the bundled browser →
-4. Sees the result →
-5. Fixes what's broken →
-6. Repeats until it works.
-
-**How to use it — step by step**
-1. Open **Claude Desktop**.
-2. Open your project folder.
-3. Tell Claude: *"Start the dev server (`npm run dev`) and verify the homepage renders without console errors."*
-4. Claude launches the server in a managed terminal, opens the bundled browser, checks for errors, and reports back.
-5. Iterate from there.
-
-**Alternatives if you don't want to use Desktop**
-- **CLI / VS Code:** Use the Chrome extension (Tip #6).
-- **Anywhere else:** The Desktop app is the path of least resistance.
-
----
-
-## 8. Fork Your Session
-
-**What it is**
-A way to **branch off** an existing session. The original keeps its state; the fork starts from the same point but goes a different direction.
-
-**When to use it**
-- "I want to try a riskier refactor without losing my current progress."
-- Exploring two implementations of the same feature.
-- Running an experiment without polluting the main session.
-
-**How to use it — two ways**
-
-**A) From inside the running session:**
-```
-/branch
-```
-
-**B) From the CLI:**
-```bash
-claude --resume <session-id> --fork-session
-```
-
-You can find the session ID with `claude --list-sessions` (or whatever your CLI surfaces — check `claude --help`).
-
-**Example workflow**
-> You're 40 minutes into a complex migration. You want to try a totally different approach but don't want to lose what you have.
-> → `/branch` → describe the new approach in the fork → if it works, keep it; if not, fall back to the original session.
-
----
-
-## 9. Use `/btw` for Side Queries
-
-**What it is**
-A way to ask Claude a quick side question **without** interrupting the main task it's working on.
-
-**When to use it**
-- "Quick — what does this regex match?"
-- "Btw, what's the syntax for a Python f-string?"
-- "Remind me, which env var controls log level?"
-
-**How to use it**
-```
-/btw what does \d{4}-\d{2}-\d{2} match?
-```
-
-The main task keeps progressing; you get an answer in-line.
-
-> **Why this matters:** Without `/btw`, side questions either derail your agent or break your flow. `/btw` keeps both threads moving.
-
----
-
-## 10. Use Git Worktrees for Massive Parallelism
-
-**What it is**
-Git worktrees let you have **multiple checkouts** of the same repo on different branches simultaneously, in different folders. Claude Code has first-class support for this — you can run **dozens of Claudes in parallel**, each on its own worktree.
-
-**When to use it**
-- Working on multiple features at once
-- Long-running tasks (don't block the main checkout)
-- True parallel automation (combine with `/loop` and `/batch`)
-
-**How to use it — step by step**
-
-**A) Start a new session in a fresh worktree (CLI):**
-```bash
-claude -w
-```
-This creates a new worktree on a new branch and starts Claude inside it. Your main checkout is untouched.
-
-**B) Desktop app:**
-Tick the **"worktree"** checkbox when starting a new session.
-
-**C) Non-git VCS (Mercurial, Sapling, etc.):**
-Use the `WorktreeCreate` hook to plug in your own checkout-creation logic.
-
-**Example workflow — running 5 Claudes in parallel**
-1. Open 5 terminals.
-2. In each: `claude -w`
-3. Give each a different task (feature A, feature B, bug fix, refactor, doc update).
-4. They all work simultaneously, no branch-switching collisions.
-
-**More:** <https://x.com/bcherny/status/2025007393290272904>
-
-> **Gotcha:** Each worktree is a real folder. Don't forget to clean up unused ones (`git worktree remove <path>`) or your repo directory will balloon.
-
----
-
-## 11. Use `/batch` to Fan Out Massive Changesets
-
-**What it is**
-A workflow that interviews you about a task, then **fans the work out to many worktree agents** — dozens, hundreds, even thousands — to crunch through it in parallel.
-
-**When to use it**
-- Codebase-wide migrations (e.g., React class components → hooks across 500 files)
-- Bulk renames / API surface changes
-- Repeated-pattern fixes across many repos
-- Anything embarrassingly parallel
-
-**How to use it — step by step**
-1. From a Claude Code session, run:
-   ```
-   /batch
-   ```
-2. Answer the interview prompts:
-   - What's the task?
-   - What's the scope (files, repos, modules)?
-   - How should success be verified per unit?
-3. Claude plans the batch, spawns worktree agents, and runs them in parallel.
-4. Review results — each unit comes back as its own diff/PR.
-
-**Example**
-> "Migrate all `console.log` calls in our 200-file repo to our new `logger.info` helper, preserving the original message and adding a module tag."
-> → `/batch` → 200 worktree agents → 200 commits → review and merge.
-
-**More:** <https://x.com/bcherny/status/2027534984534544489>
-
----
-
-## 12. Use `--bare` to Speed Up SDK Startup by Up to 10×
-
-**What it is**
-A flag that **skips** Claude's default discovery step (looking for local `CLAUDE.md` files, settings, MCPs). For non-interactive runs, you usually want to specify what loads explicitly anyway.
-
-**When to use it**
-- `claude -p` one-shot prompts
-- TypeScript / Python SDK calls
-- CI pipelines, GitHub Actions, scripted automation
-
-**When NOT to use it**
-- Interactive sessions where you *want* the project's `CLAUDE.md` and settings auto-loaded.
-
-**How to use it — step by step**
-
-**Before (slow startup):**
-```bash
-claude -p "summarize the diff" < diff.patch
-```
-
-**After (`--bare`, much faster):**
-```bash
-claude -p --bare \
-  --system-prompt "You are a concise PR reviewer." \
-  --mcp-config ./mcp.json \
-  --settings ./review-settings.json \
-  "summarize the diff" < diff.patch
-```
-
-**Same in the SDK** — pass `bare: true` (or the equivalent option) in the SDK config object, then explicitly provide `systemPrompt`, `mcpConfig`, and `settings`.
-
-> **Heads-up:** A future SDK version will flip the default to `--bare`. Opt in now and your code stays forward-compatible.
-
----
-
-## 13. Use `--add-dir` to Give Claude Access to More Folders
+## 20. Use `--add-dir` to Give Claude Access to More Folders
 
 **What it is**
 A way to extend Claude's working scope to additional directories — so it can **read, edit, and run commands** in repos beyond the one you started in.
@@ -430,7 +604,132 @@ Now everyone on the team gets the same multi-repo scope automatically.
 
 ---
 
-## 14. Use `--agent` to Give Claude a Custom System Prompt & Tools
+## 21. Connect External Tools with MCP
+
+**What it is**
+The Model Context Protocol (MCP) lets Claude talk to external systems — databases, issue trackers, browsers, design tools, your company's internal APIs — through standardized server connections.
+
+**When to use it**
+- Querying a real database instead of guessing your schema
+- Pulling ticket details from Jira/Linear/GitHub directly
+- Giving Claude any capability beyond reading and editing local files
+
+**How to use it — step by step**
+1. Add a server from the CLI:
+   ```bash
+   claude mcp add <name> -- <command to start the server>
+   ```
+2. Or add it to `.mcp.json` in your project to share with the team:
+   ```json
+   {
+     "mcpServers": {
+       "postgres": { "command": "npx", "args": ["-y", "@some/postgres-mcp", "$DB_URL"] }
+     }
+   }
+   ```
+3. List and check connections:
+   ```bash
+   claude mcp list
+   ```
+4. In-session, Claude can now call that server's tools (and read its resources via `@`).
+
+> **Pro tip:** Only enable the servers you actually need — each one adds tools and context. Trim aggressively for speed.
+
+---
+
+## 22. Delegate Work to Subagents
+
+**What it is**
+Ask Claude to spin up **subagents** — separate agent instances that handle a chunk of work (research, a wide search, an isolated edit) and report back a summary. This keeps your main session's context clean while work happens in parallel.
+
+**When to use it**
+- Broad "search the whole codebase for X" sweeps where you only want the conclusion
+- Running several independent investigations at once
+- Keeping a long task's context lean by offloading noisy exploration
+
+**How to use it — step by step**
+1. Just ask, naming the shape of the work:
+   ```
+   use a subagent to find every place we call the legacy payment API
+   ```
+2. For multiple parallel tracks:
+   ```
+   spin up subagents to (a) audit test coverage and (b) list unused dependencies
+   ```
+3. Each subagent works independently and returns a summary to your main session.
+
+> **Pro tip:** Subagents (in-session, ad hoc) and custom agents (Tip #25, pre-configured files) complement each other — use custom agents for repeatable roles, subagents for one-off fan-out.
+
+---
+
+## 23. Use Git Worktrees for Massive Parallelism
+
+**What it is**
+Git worktrees let you have **multiple checkouts** of the same repo on different branches simultaneously, in different folders. Claude Code has first-class support for this — you can run **dozens of Claudes in parallel**, each on its own worktree. This is the mechanism behind the parallel workflow in Tip #17.
+
+**When to use it**
+- Working on multiple features at once
+- Long-running tasks (don't block the main checkout)
+- True parallel automation (combine with `/loop` and `/batch`)
+
+**How to use it — step by step**
+
+**A) Start a new session in a fresh worktree (CLI):**
+```bash
+claude -w
+```
+This creates a new worktree on a new branch and starts Claude inside it. Your main checkout is untouched.
+
+**B) Desktop app:**
+Tick the **"worktree"** checkbox when starting a new session.
+
+**C) Non-git VCS (Mercurial, Sapling, etc.):**
+Use the `WorktreeCreate` hook to plug in your own checkout-creation logic.
+
+**Example workflow — running 5 Claudes in parallel**
+1. Open 5 terminals.
+2. In each: `claude -w`
+3. Give each a different task (feature A, feature B, bug fix, refactor, doc update).
+4. They all work simultaneously, no branch-switching collisions.
+
+**More:** <https://x.com/bcherny/status/2025007393290272904>
+
+> **Gotcha:** Each worktree is a real folder. Don't forget to clean up unused ones (`git worktree remove <path>`) or your repo directory will balloon.
+
+---
+
+## 24. Use `/batch` to Fan Out Massive Changesets
+
+**What it is**
+A workflow that interviews you about a task, then **fans the work out to many worktree agents** — dozens, hundreds, even thousands — to crunch through it in parallel.
+
+**When to use it**
+- Codebase-wide migrations (e.g., React class components → hooks across 500 files)
+- Bulk renames / API surface changes
+- Repeated-pattern fixes across many repos
+- Anything embarrassingly parallel
+
+**How to use it — step by step**
+1. From a Claude Code session, run:
+   ```
+   /batch
+   ```
+2. Answer the interview prompts:
+   - What's the task?
+   - What's the scope (files, repos, modules)?
+   - How should success be verified per unit?
+3. Claude plans the batch, spawns worktree agents, and runs them in parallel.
+4. Review results — each unit comes back as its own diff/PR.
+
+**Example**
+> "Migrate all `console.log` calls in our 200-file repo to our new `logger.info` helper, preserving the original message and adding a module tag."
+> → `/batch` → 200 worktree agents → 200 commits → review and merge.
+
+**More:** <https://x.com/bcherny/status/2027534984534544489>
+
+---
+
+## 25. Use `--agent` to Give Claude a Custom System Prompt & Tools
 
 **What it is**
 A **custom agent** — your own pre-configured Claude with a specific system prompt, tool allowlist, model choice, and personality. Save it once, summon it forever.
@@ -470,7 +769,7 @@ A **custom agent** — your own pre-configured Claude with a specific system pro
 4. Iterate — tweak the prompt, add/remove tools, until the agent behaves the way you want.
 
 **Pro composition**
-Combine with `/loop` (Tip #3) for autonomous workflows:
+Combine with `/loop` (Tip #18) for autonomous workflows:
 ```bash
 /loop 30m /run-agent pr-reviewer
 ```
@@ -479,51 +778,101 @@ Combine with `/loop` (Tip #3) for autonomous workflows:
 
 ---
 
+## 26. Use `--bare` to Speed Up SDK Startup by Up to 10×
+
+**What it is**
+A flag that **skips** Claude's default discovery step (looking for local `CLAUDE.md` files, settings, MCPs). For non-interactive runs, you usually want to specify what loads explicitly anyway.
+
+**When to use it**
+- `claude -p` one-shot prompts
+- TypeScript / Python SDK calls
+- CI pipelines, GitHub Actions, scripted automation
+
+**When NOT to use it**
+- Interactive sessions where you *want* the project's `CLAUDE.md` and settings auto-loaded.
+
+**How to use it — step by step**
+
+**Before (slow startup):**
+```bash
+claude -p "summarize the diff" < diff.patch
+```
+
+**After (`--bare`, much faster):**
+```bash
+claude -p --bare \
+  --system-prompt "You are a concise PR reviewer." \
+  --mcp-config ./mcp.json \
+  --settings ./review-settings.json \
+  "summarize the diff" < diff.patch
+```
+
+**Same in the SDK** — pass `bare: true` (or the equivalent option) in the SDK config object, then explicitly provide `systemPrompt`, `mcpConfig`, and `settings`.
+
+> **Heads-up:** A future SDK version will flip the default to `--bare`. Opt in now and your code stays forward-compatible.
+
+---
+
 ## Quick Reference Cheat Sheet
 
 ```bash
-# ─── Sessions ───────────────────────────────────────
-claude --teleport                       # move cloud session local
-/teleport                               # same, from inside a session
-/remote-control                         # control local session remotely
-/branch                                 # fork current session
-claude --resume <id> --fork-session     # fork from CLI
+# ─── Foundations (every session) ────────────────────
+Shift+Tab                               # cycle to plan mode
+/init                                   # generate a CLAUDE.md
+# <rule>                                # quick-add a memory
+think | think hard | ultrathink         # more reasoning budget
+/clear                                  # wipe context for a new task
+/compact                                # condense a long session
+/rewind                                 # undo to a checkpoint (or Esc Esc)
+@path/to/file                           # pull an exact file into context
 
-# ─── Automation ─────────────────────────────────────
+# ─── Daily drivers ──────────────────────────────────
+/<name> [args]                          # run a custom slash command
+/btw <question>                         # side query, no derail
+/branch                                 # fork current session
+claude --teleport                       # move cloud session local
+/remote-control                         # control local session remotely
+
+# ─── Automation & scale ─────────────────────────────
+/model                                  # pick the most capable model
 /loop <interval> <command>              # recurring task (5m, 30m, 1h…)
 /schedule                               # one-time scheduled run
-
-# ─── Productivity ───────────────────────────────────
-/btw <question>                         # side query, no derail
+claude --add-dir <path>                 # give access to another folder
+claude mcp add <name> -- <cmd>          # connect an external tool (MCP)
 claude -w                               # start in a new worktree
 /batch                                  # fan out massive changeset
-
-# ─── Multi-repo / SDK ───────────────────────────────
-claude --add-dir <path>                 # give access to another folder
-/add-dir <path>                         # same, mid-session
-claude -p --bare ...                    # fast non-interactive startup
 claude --agent=<name>                   # run a custom agent
+claude -p --bare ...                    # fast non-interactive startup
 ```
 
 ---
 
 ## Suggested Learning Path
 
-**Week 1 — Get comfortable**
-1. Install the **mobile app** (Tip #1)
-2. Try `/teleport` and `/remote-control` (Tip #2)
-3. Install the **Chrome extension** (Tip #6)
-4. Use `/btw` for side questions (Tip #9)
+**Week 1 — Foundations** (shapes *every* session)
+1. Start tasks in **Plan Mode** with `Shift+Tab` (Tip #1)
+2. Run `/init` and tend your **CLAUDE.md** (Tip #2)
+3. Let Claude **write its own rules & prompts** (Tip #3)
+4. Use `think` / `ultrathink` on hard problems (Tip #4)
+5. Build the **verify-first** habit — give Claude a feedback loop (Tip #5)
+6. Practice `/clear` and `/compact`, and pull files in with `@` (Tips #6, #7)
 
-**Week 2 — Add automation**
-5. Write your first **skill**, then wrap it in `/loop` (Tip #3)
-6. Add a `Stop` hook so Claude doesn't quit early (Tip #4)
-7. Try `--add-dir` for multi-repo work (Tip #13)
+**Week 2 — Daily drivers**
+7. Write your first **custom slash command** (Tip #9)
+8. Install the **Chrome extension** and test in a browser (Tip #10)
+9. Use `/btw` for side questions (Tip #12)
+10. Install the **mobile app** and try `/teleport` (Tips #14, #15)
 
-**Week 3 — Scale up**
-8. Start a worktree session with `claude -w` (Tip #10)
-9. Run a small `/batch` job (Tip #11)
-10. Build a **custom agent** for a recurring task (Tip #14)
+**Week 3 — Automation**
+11. Pick the **best model + run a couple of Claudes in parallel** (Tip #17)
+12. Write a skill, then wrap it in `/loop` (Tip #18)
+13. Add a `Stop` hook so Claude doesn't quit early (Tip #19)
+14. Connect an **MCP server** (Tip #21)
+
+**Week 4 — Scale up**
+15. Start a worktree session with `claude -w` (Tip #23)
+16. Run a small `/batch` job (Tip #24)
+17. Build a **custom agent** and delegate to **subagents** (Tips #25, #22)
 
 ---
 
