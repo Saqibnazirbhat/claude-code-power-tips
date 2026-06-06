@@ -1,11 +1,11 @@
-# Claude Code : 26 Power Tips & Workflows
+# Claude Code : 27 Power Tips & Workflows
 
 A practical, hands-on guide to Claude Code's most useful features. Each tip walks you through **what it is**, **when you'd reach for it**, and **exactly how to use it** — with example scenarios so you can copy-paste your way into a working setup.
 
 The tips are ordered to be read top to bottom: **Foundations** (the handful of habits that shape every single session) come first, then **Daily Drivers**, then **Automation & Scale** for when you're ready to multiply your throughput.
 
 > **New to Claude Code?** Just start at Tip #1 and work down through the Foundations (1–8). They unlock 80% of the daily value.
-> **Already shipping with it?** Jump to the Automation & Scale section (17–26).
+> **Already shipping with it?** Jump to the Automation & Scale section (17–27).
 
 ---
 
@@ -48,6 +48,7 @@ The tips are ordered to be read top to bottom: **Foundations** (the handful of h
 | 24 | [`/batch`](#24-use-batch-to-fan-out-massive-changesets) | Fan out huge changesets |
 | 25 | [Custom Agents](#25-use---agent-to-give-claude-a-custom-system-prompt--tools) | Specialized agents on demand |
 | 26 | [`--bare`](#26-use---bare-to-speed-up-sdk-startup-by-up-to-10x) | 10× faster SDK startup |
+| 27 | [Dynamic Workflows](#27-dynamic-workflows--let-claude-build-its-own-harness) | Claude writes its own multi-agent harness on the fly |
 
 ---
 
@@ -813,6 +814,74 @@ claude -p --bare \
 
 ---
 
+## 27. Dynamic Workflows — Let Claude Build Its Own Harness
+
+**What it is**
+The most powerful pattern in this guide. Instead of doing a task in one context window, Claude **writes its own orchestration program** (a small JavaScript file) that spawns and coordinates **many separate Claudes** — each with its own clean context, a narrow job, and (optionally) its own model and git worktree. Claude stops being a single worker and becomes the *manager of a team* it designed for your exact task.
+
+This is the difference between a **static** workflow (a generic coordinator you wrote ahead of time with `claude -p` or the SDK) and a **dynamic** one (a custom harness Claude writes in the moment, tailored to the job).
+
+**Why it matters**
+A single long-running context drifts into three failure modes that dynamic workflows structurally prevent:
+- **Agentic laziness** — quitting early ("did 20 of 50 items, done"). Fan-out gives each item its own agent, so nothing gets skipped.
+- **Self-preferential bias** — grading its own work too kindly. A *separate* verifier agent can't be biased toward output it didn't produce.
+- **Goal drift** — losing the original constraints after compaction. Each subagent gets a fresh, focused goal.
+
+**When to use it**
+- Long-running, **massively parallel**, or highly structured **adversarial** tasks.
+- When you need **unbiased judging** (verify claims, grade outputs against a rubric, pick a winner).
+- When each unit of work benefits from a **clean context** so they don't cross-contaminate.
+
+**When NOT to use it**
+- Ordinary coding tasks. Dynamic workflows use **significantly more tokens** — most tasks don't need a panel of five reviewers. Ask: *does this really need more compute?*
+
+**How to use it — step by step**
+1. **Trigger one** by just asking, or use the keyword **`ultracode`** to force Claude to build a workflow:
+   ```
+   ultracode: go through all 50 items in this security review and fix each in its own worktree
+   ```
+2. **Name the pattern** you want (this is the real skill — see the table below):
+   ```
+   use a workflow to fact-check every claim in my draft: one agent finds the claims,
+   a subagent verifies each against the codebase, a second agent checks the source quality
+   ```
+3. **Constrain it** when needed — Claude can pick the model and isolation per agent:
+   ```
+   use a quick workflow, budget 10k tokens, cheap model for the fan-out and Opus for the judge
+   ```
+4. **Pair with `/goal` and `/loop`** for repeatable jobs (triage, research, verification):
+   ```
+   /loop /triage-queue   →   classify each ticket, dedupe, escalate the novel ones
+   ```
+5. **Save & share** — press **`s`** in the workflow menu to store it in `~/.claude/workflows`, or bundle the `.js` file in a skill (reference it from `SKILL.md`) so your team can reuse it as a template.
+
+**The reusable patterns** (compose these together)
+
+| Pattern | What it does | Example |
+|---------|--------------|---------|
+| **Fan-out & synthesize** | Split into many small pieces, one agent each, then merge | Profile 50 columns / rank 80 resumes |
+| **Adversarial verification** | A second agent tries to *disprove* the first against a rubric | Fact-check every claim in a report |
+| **Generate & filter** | Brainstorm many ideas, then filter to the best | Name a tool; design exploration |
+| **Tournament** | Agents compete; pairwise judges pick a winner | Sort 1,000 tickets by severity |
+| **Classify & route** | A classifier decides the task type → routes to the right agent/model | Sonnet vs Opus by complexity |
+| **Loop until done** | Keep spawning agents until a stop condition holds | Hunt a flaky test; sweep logs |
+
+**Example workflows to copy**
+```
+This test fails ~1 in 50 runs. Set up a workflow to reproduce it, form theories,
+and adversarially test them in worktrees. /goal don't stop until one theory works.
+
+Here's a folder of 80 resumes — use a workflow to rank them for the backend role
+and double-check the top ten. Interview me with AskUserQuestion for a rubric.
+
+Take my business plan and run a workflow where different agents tear it apart from
+an investor's, a customer's, and a competitor's perspective.
+```
+
+> **Pro tip:** This is Tips #17 (parallel Claudes), #22 (subagents), and #23 (worktrees) fused into one self-assembling harness — but the unifying idea is still Tip #5: a dynamic workflow is a *verification machine* you let Claude build. Start with a **"quick workflow"** for a single adversarial check before reaching for a full multi-agent run.
+
+---
+
 ## Quick Reference Cheat Sheet
 
 ```bash
@@ -843,6 +912,8 @@ claude -w                               # start in a new worktree
 /batch                                  # fan out massive changeset
 claude --agent=<name>                   # run a custom agent
 claude -p --bare ...                    # fast non-interactive startup
+ultracode: <task>                       # force Claude to build a dynamic workflow
+"use a quick workflow to ..."           # lightweight one-off multi-agent check
 ```
 
 ---
@@ -873,6 +944,7 @@ claude -p --bare ...                    # fast non-interactive startup
 15. Start a worktree session with `claude -w` (Tip #23)
 16. Run a small `/batch` job (Tip #24)
 17. Build a **custom agent** and delegate to **subagents** (Tips #25, #22)
+18. Try a **dynamic workflow** — start with a "quick workflow" adversarial check, then a fan-out (Tip #27)
 
 ---
 
