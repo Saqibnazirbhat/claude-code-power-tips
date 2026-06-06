@@ -1,4 +1,4 @@
-# Claude Code — 26 Power Tips & Workflows
+# Claude Code : 26 Power Tips & Workflows
 
 A practical, hands-on guide to Claude Code's most useful features. Each tip walks you through **what it is**, **when you'd reach for it**, and **exactly how to use it** — with example scenarios so you can copy-paste your way into a working setup.
 
