@@ -1,11 +1,11 @@
-# Claude Code : 27 Power Tips & Workflows
+# Claude Code : 28 Power Tips & Workflows
 
 A practical, hands-on guide to Claude Code's most useful features. Each tip walks you through **what it is**, **when you'd reach for it**, and **exactly how to use it** — with example scenarios so you can copy-paste your way into a working setup.
 
 The tips are ordered to be read top to bottom: **Foundations** (the handful of habits that shape every single session) come first, then **Daily Drivers**, then **Automation & Scale** for when you're ready to multiply your throughput.
 
 > **New to Claude Code?** Just start at Tip #1 and work down through the Foundations (1–8). They unlock 80% of the daily value.
-> **Already shipping with it?** Jump to the Automation & Scale section (17–27).
+> **Already shipping with it?** Jump to the Automation & Scale section (17–28).
 
 ---
 
@@ -49,6 +49,7 @@ The tips are ordered to be read top to bottom: **Foundations** (the handful of h
 | 25 | [Custom Agents](#25-use---agent-to-give-claude-a-custom-system-prompt--tools) | Specialized agents on demand |
 | 26 | [`--bare`](#26-use---bare-to-speed-up-sdk-startup-by-up-to-10x) | 10× faster SDK startup |
 | 27 | [Dynamic Workflows](#27-dynamic-workflows--let-claude-build-its-own-harness) | Claude writes its own multi-agent harness on the fly |
+| 28 | [Write the Loop, Not Just the Prompt](#28-write-the-loop-not-just-the-prompt) | Loop engineering — author the control loop, let Claude be the body |
 
 ---
 
@@ -882,6 +883,64 @@ an investor's, a customer's, and a competitor's perspective.
 
 ---
 
+## 28. Write the Loop, Not Just the Prompt
+
+**What it is**
+A mindset shift that Boris Cherny (Claude Code's creator) calls **loop engineering**. There are three ways to get work done: you can **write the code** yourself, **write the prompt** and take a one-shot answer, or **write the loop** — author the control structure and let Claude be the *body* that runs inside it. Your job moves up a level: you're no longer writing the solution or even the instruction, you're engineering the feedback loop that drives an agent toward a goal. The loop from the talk looks like this:
+
+```js
+// fix every bug report
+do {
+  claude("read #feedback, fix top report")   // act
+  verify()                                    // check the work
+} while (!goal("every report has a PR"))      // stop only when the goal holds
+schedule("+10m")                              // re-trigger later
+```
+
+The interesting engineering isn't the prompt string — it's the three things wrapped around it: a **goal predicate** that defines "done," a **verify** step so nothing is trusted blindly, and a **schedule** so the loop persists over time.
+
+**When to use it**
+- A backlog that should be *drained*, not touched once — bug reports, review comments, failing tests, stale tickets
+- Any task where "done" is a checkable condition (`every report has a PR`, `all tests green`, `queue is empty`)
+- When you'd otherwise babysit Claude through the same act → check → repeat cycle by hand
+
+**How to use it — step by step**
+1. **Write the body as a skill.** Make one small, named workflow that does a *single* iteration (Tip #9, #18):
+   ```markdown
+   ---
+   description: Read the top unresolved bug report and open a PR that fixes it
+   ---
+   Find the highest-priority unresolved bug report. Fix it. Open a PR.
+   Run the test suite and don't finish until it's green.
+   ```
+2. **Give it a verify step** so the loop can't lie about progress (Tip #5) — a test run, a curl, a linter baked into the skill or enforced by a `Stop` hook (Tip #19).
+3. **Define the goal — the stop condition.** This is the `while (!goal(...))` — the loop keeps going *only* until it's true:
+   ```
+   /goal every open bug report has a linked PR
+   ```
+4. **Wrap it in a loop with a cadence** — this is the `do { … } while` plus `schedule("+10m")` (Tip #18):
+   ```
+   /loop 10m /fix-top-bug
+   ```
+5. **Watch the first few turns** — confirm it *terminates* when the goal is met and doesn't spin on a stuck item.
+
+**Mapping the pseudocode to real commands**
+
+| In the slide | In Claude Code | Tip |
+|--------------|----------------|-----|
+| `claude("…")` | a skill / slash command (the body) | #9, #18 |
+| `verify()` | test run, curl, linter, or `Stop` hook | #5, #19 |
+| `!goal(…)` | `/goal <condition>` (the stop condition) | #18 |
+| `do { … } while` + `schedule("+10m")` | `/loop 10m /skill` | #18 |
+
+**Example workflow**
+> Your team files bugs into a `#feedback` channel and you want every one to end up as a PR, without you triaging by hand.
+> → Write a `/fix-top-bug` skill (act + verify) → set `/goal every report in #feedback has a PR` → run `/loop 10m /fix-top-bug` → each cycle Claude grabs the top report, fixes it, verifies, and pushes a PR, stopping only when the queue is drained.
+
+> **Pro tip:** This is Tip #5 (verify) and Tip #18 (`/loop`) fused into a single idea — the durable skill isn't prompt-crafting, it's designing good **stop conditions, verification checks, and cadence**. Get those three right and the model handles every iteration in between. Reach for Tip #27's dynamic workflows when a single loop body should itself fan out to a team of agents.
+
+---
+
 ## Quick Reference Cheat Sheet
 
 ```bash
@@ -914,6 +973,8 @@ claude --agent=<name>                   # run a custom agent
 claude -p --bare ...                    # fast non-interactive startup
 ultracode: <task>                       # force Claude to build a dynamic workflow
 "use a quick workflow to ..."           # lightweight one-off multi-agent check
+/goal <condition>                       # set a loop's stop condition
+/loop 10m /skill                        # loop engineering: act → verify → repeat
 ```
 
 ---
@@ -945,6 +1006,7 @@ ultracode: <task>                       # force Claude to build a dynamic workfl
 16. Run a small `/batch` job (Tip #24)
 17. Build a **custom agent** and delegate to **subagents** (Tips #25, #22)
 18. Try a **dynamic workflow** — start with a "quick workflow" adversarial check, then a fan-out (Tip #27)
+19. Practice **loop engineering** — wrap a verify-backed skill in `/loop` with a `/goal` stop condition (Tip #28)
 
 ---
 
