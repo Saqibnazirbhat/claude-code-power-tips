@@ -72,6 +72,7 @@ A mode where Claude researches and proposes a plan **without touching any files*
 4. When the plan looks right, approve it. Claude switches to executing — and often one-shots the whole task.
 
 > **Pro tip:** Plan mode → approve → auto-accept edits is the workflow Boris Cherny (Claude Code's creator) uses for most PRs. Pair it with extended thinking (Tip #4): *"think hard, then give me a plan."*
+> **Personal POV:** As models continue to get better maybe in future we may not use plan mode.
 
 ---
 
